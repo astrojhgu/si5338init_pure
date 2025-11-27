@@ -61,6 +61,7 @@ module mkSi5338(Si5338#(baud_rate, clock_freq_Hz));
     Reg#(Si5338Reg) reg_data1<-mkReg(?);
     Reg#(Bit#(8)) reg_new_data<-mkReg(?);
     Reg#(UInt#(26)) wait_counter<-mkReg(0);
+    Reg#(Bit#(7)) check_locked_count<-mkReg(0);
 
 `ifdef DEBUG_OUT
     function Stmt print_str(String s);
@@ -352,7 +353,7 @@ module mkSi5338(Si5338#(baud_rate, clock_freq_Hz));
         print_line_break();
 
 
-        while (True)seq
+        for (check_locked_count<=0; check_locked_count != 5; check_locked_count <= check_locked_count + 1) seq
             read_reg_data(si5338_i2c_addr, 8'hda);
             if(received_data[4]==0) seq
                 print_str("locked");
